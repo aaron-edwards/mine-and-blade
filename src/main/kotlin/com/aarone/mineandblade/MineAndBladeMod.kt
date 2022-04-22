@@ -1,7 +1,10 @@
-package example.examplemod
+package com.aarone.mineandblade
 
-import example.examplemod.block.ModBlocks
 import net.minecraft.client.Minecraft
+import net.minecraft.world.item.Item
+import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent
+import net.minecraftforge.eventbus.api.Event
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent
@@ -18,30 +21,22 @@ import thedarkcolour.kotlinforforge.forge.runForDist
  *
  * An example for blocks is in the `blocks` package of this mod.
  */
-@Mod(ExampleMod.ID)
-object ExampleMod {
-    const val ID = "examplemod"
+@Mod(MineAndBladeMod.ID)
+object MineAndBladeMod {
+    const val ID = "mine_and_blade"
 
     // the logger for our mod
     val LOGGER: Logger = LogManager.getLogger(ID)
 
     init {
-        LOGGER.log(Level.INFO, "Hello world!")
-
-        // Register the KDeferredRegister to the mod-specific event bus
-        ModBlocks.REGISTRY.register(MOD_BUS)
-
-        val obj = runForDist(
+        runForDist(
             clientTarget = {
-                MOD_BUS.addListener(::onClientSetup)
-                Minecraft.getInstance()
+                MinecraftForge.EVENT_BUS.register(VillagerInteractionEventHandler(LOGGER))
+                MOD_BUS.addListener(MineAndBladeMod::onClientSetup)
             },
             serverTarget = {
-                MOD_BUS.addListener(::onServerSetup)
-                "test"
+                MOD_BUS.addListener(MineAndBladeMod::onServerSetup)
             })
-
-        println(obj)
     }
 
     /**
